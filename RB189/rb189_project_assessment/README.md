@@ -13,6 +13,8 @@ Ruby 2.6.3p62 [x86_64-Linux]
 PostgreSQL v13.7
 Sinatra v1.4.7
 
+Webrick is the preferred server used during the design of this project
+
 This program was designed, tested, and run in an AWS Cloud9 environment through a Google Chrome web browser
 
 ---- USING THIS APPLICATION PROPERLY ----
