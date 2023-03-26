@@ -1,22 +1,21 @@
 CREATE TABLE apartment_buildings (
 id serial PRIMARY KEY,
 name text UNIQUE NOT NULL,
-total_units INTEGER NOT NULL
 address text UNIQUE NOT NULL
 );
 
 
 CREATE TABLE units (
 id serial PRIMARY KEY,
-building_id integer NOT NULL REFERENCES apartment_buildings.id,
+building_id integer NOT NULL REFERENCES apartment_buildings (id),
 rent NUMERIC(6,2) NOT NULL,
 tenant text UNIQUE NOT NULL
 );
 
-INSERT INTO apartment_buildings (name, total_units, address) VALUES
-('Fillmore Center', 15, '1420 Turk St'),
-('Vintage Pads', 10, '14 E Border Place'),
-('Baker Street apts', 4, '12 Baker St');
+INSERT INTO apartment_buildings (name, address) VALUES
+('Fillmore Center', '1420 Turk St'),
+('Vintage Pads', '14 E Border Place'),
+('Baker Street apts', '12 Baker St');
 
 INSERT INTO units (building_id, rent, tenant) VALUES
 (1, 2650, 'Stephanie Smith'), (1, 2650, 'James Earl'), (1, 1700, 'Tiffany Mueller'), (1, 3600, 'Zach Brown'),
