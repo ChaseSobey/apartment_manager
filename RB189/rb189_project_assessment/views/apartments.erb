@@ -1,5 +1,5 @@
 <ul>
-  <% @storage.all_apartments.each do |building| %>
+  <% @apartments.each do |building| %>
     <li>
       <a href='/apartment/<%= building[:id] %>'>
         <h2><%= building[:name] %></h2>

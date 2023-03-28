@@ -1,0 +1,11 @@
+<ul>
+  <% @units.each do |unit| %>
+    <li>
+        <h2>Tenant: <%= unit[:tenant] %>.     Rent: $<%= unit[:rent] %></h2>
+    </li>
+  <% end %>
+</ul>
+
+<% content_for :header_links do %>
+  <a>New Apartment Building</a>
+<% end %>

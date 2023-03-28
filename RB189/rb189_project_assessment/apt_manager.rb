@@ -15,5 +15,13 @@ before do
 end
 
 get '/' do
+  @apartments = @storage.all_apartments
   erb :apartments
+end
+
+get '/apartment/:apt_id' do
+  @apartment_id = params[:apt_id].to_i
+  @units = @storage.units_in_apartment(@apartment_id)
+  
+  erb :apartment
 end
