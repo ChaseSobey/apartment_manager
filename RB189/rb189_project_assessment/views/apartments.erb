@@ -1,7 +1,7 @@
 <ul>
   <% @apartments.each do |building| %>
     <li>
-      <a href='/apartment/<%= building[:id] %>'>
+      <a href='/apartments/<%= building[:id] %>'>
         <h2><%= building[:name] %></h2>
       </a>
     </li>
@@ -9,5 +9,5 @@
 </ul>
 
 <% content_for :header_links do %>
-  <a>New Apartment Building</a>
+  <a href='/apartments/new'>Add new apartment building</a>
 <% end %>

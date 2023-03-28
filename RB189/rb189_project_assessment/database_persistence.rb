@@ -27,4 +27,12 @@ class DatabasePersistence
       { id: tuple['id'], building_id: tuple['building_id'], rent: tuple['rent'], tenant: tuple['tenant'] }
     end
   end
+  
+  def add_new_apartment(name, address)
+    sql = <<~SQL
+      INSERT INTO apartment_buildings (name, address) VALUES ($1, $2);
+    SQL
+    
+    @db.exec_params(sql, [name, address])
+  end
 end
