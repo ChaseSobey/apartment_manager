@@ -1,1 +1,13 @@
-<h1>LOOK AT ALL OF THESE GOD DAMN APARTMENTS MAYNE??!!!?</h1>
+<ul>
+  <% @storage.all_apartments.each do |building| %>
+    <li>
+      <a href='/apartment/<%= building[:id] %>'>
+        <h2><%= building[:name] %></h2>
+      </a>
+    </li>
+  <% end %>
+</ul>
+
+<% content_for :header_links do %>
+  <a>New Apartment Building</a>
+<% end %>
