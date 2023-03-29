@@ -4,6 +4,9 @@
       <a href='/apartments/<%= building[:id] %>'>
         <h2><%= building[:name] %></h2>
       </a>
+      <form action="/apartments/<%= building[:id] %>/delete" method="get">
+            <input type="submit" value="Remove Property">
+        </form>
     </li>
   <% end %>
 </ul>

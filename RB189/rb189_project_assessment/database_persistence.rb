@@ -17,6 +17,28 @@ class DatabasePersistence
     end
   end
   
+  def find_apartment(id)
+    sql = <<~SQL
+      SELECT * FROM apartment_buildings WHERE id = $1;
+    SQL
+    
+    result = @db.exec_params(sql, [id])
+    result.map do |tuple|
+      { id: tuple['id'], name: tuple['name'], address: tuple['address'] }
+    end
+  end
+  
+  def find_tenant(id)
+    sql = <<~SQL
+      SELECT * FROM units WHERE id = $1;
+    SQL
+    
+    result = @db.exec_params(sql, [id])
+    result.map do |tuple|
+      { id: tuple['id'], building_id: tuple['building_id'], rent: tuple['rent'], tenant: tuple['tenant'] }
+    end
+  end
+  
   def units_in_apartment(apt_id)
     sql = <<~SQL
       SELECT * FROM units WHERE building_id = $1 ORDER BY tenant;
@@ -42,5 +64,17 @@ class DatabasePersistence
     SQL
     
     @db.exec_params(sql, [building_id, tenant, rent])
+  end
+  
+  def delete_apartment(id)
+    sql = 'DELETE FROM apartment_buildings WHERE id = $1'
+    
+    @db.exec_params(sql, [id])
+  end
+  
+  def delete_tenant(id)
+    sql = 'DELETE FROM units WHERE id = $1'
+    
+    @db.exec_params(sql, [id])
   end
 end

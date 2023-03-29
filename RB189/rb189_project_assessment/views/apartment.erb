@@ -1,11 +1,16 @@
 <ul>
   <% @units.each do |unit| %>
     <li>
-        <h2>Tenant: <%= unit[:tenant] %>.     Rent: $<%= unit[:rent] %></h2>
+        <h2>Tenant: <%= unit[:tenant] %></h2>
+        <h3>Rent: $<%= unit[:rent] %></h3>
+        <form action="/apartments/<%= @apartment_id %>/tenant/<%= unit[:id] %>/delete" method="get">
+            <input type="submit" value="Remove Tenant">
+        </form>
     </li>
   <% end %>
 </ul>
 
 <% content_for :header_links do %>
-  <a href='/apartments/<%= @apartment_id %>/new_tenant'>Add new tenant to building</a>
+  <ul><a href='/apartments/<%= @apartment_id %>/new_tenant'>Add new tenant to building</a></ul>
+  <ul><a href='/apartments'>Return to list of apartments</a></ul>
 <% end %>

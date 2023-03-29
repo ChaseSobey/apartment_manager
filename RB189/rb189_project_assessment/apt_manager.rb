@@ -66,6 +66,26 @@ get '/apartments/:apt_id' do
   erb :apartment
 end
 
+get '/apartments/:apt_id/delete' do
+  apt_id = params[:apt_id]
+  apt_name = @storage.find_apartment(apt_id)[0][:name]
+  
+  @storage.delete_apartment(apt_id)
+  session[:success] = "#{apt_name} has been removed."
+  redirect '/apartments'
+end
+  
+
+get '/apartments/:apt_id/tenant/:tenant_id/delete' do
+  tenant_id = params[:tenant_id]
+  apt_id = params[:apt_id]
+  tenant_name = @storage.find_tenant(tenant_id)[0][:tenant]
+  
+  @storage.delete_tenant(tenant_id)
+  session[:success] = "Tenant #{tenant_name} has been removed."
+  redirect "/apartments/#{apt_id}"
+end
+
 get '/apartments/:apt_id/new_tenant' do
   @apartment_id = params[:apt_id].to_i
   
