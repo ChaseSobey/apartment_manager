@@ -35,4 +35,12 @@ class DatabasePersistence
     
     @db.exec_params(sql, [name, address])
   end
+  
+  def add_new_tenant(tenant, rent, building_id)
+    sql = <<~SQL
+      INSERT INTO units (building_id, tenant, rent) VALUES ($1, $2, $3);
+    SQL
+    
+    @db.exec_params(sql, [building_id, tenant, rent])
+  end
 end
