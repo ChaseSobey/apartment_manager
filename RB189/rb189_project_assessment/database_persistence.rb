@@ -19,7 +19,7 @@ class DatabasePersistence
   
   def units_in_apartment(apt_id)
     sql = <<~SQL
-      SELECT * FROM units WHERE building_id = $1;
+      SELECT * FROM units WHERE building_id = $1 ORDER BY tenant;
     SQL
     
     result = @db.exec_params(sql, [apt_id])
