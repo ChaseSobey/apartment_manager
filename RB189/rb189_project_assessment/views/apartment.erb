@@ -3,6 +3,7 @@
     <li>
         <h2>Tenant: <%= unit[:tenant] %></h2>
         <h3>Rent: $<%= unit[:rent] %></h3>
+        <a href='/apartments/<%= @apartment_id %>/tenant/<%= unit[:id] %>/update'>Edit Tenant Information</a>
         <form action="/apartments/<%= @apartment_id %>/tenant/<%= unit[:id] %>/delete" method="get">
             <input type="submit" value="Remove Tenant">
         </form>

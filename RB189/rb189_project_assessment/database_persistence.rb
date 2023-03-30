@@ -77,4 +77,16 @@ class DatabasePersistence
     
     @db.exec_params(sql, [id])
   end
+  
+  def update_apartment_info(id, name, address)
+    sql = 'UPDATE apartment_buildings SET name = $1, address = $2 WHERE id = $3'
+    
+    @db.exec_params(sql, [name, address, id])
+  end
+  
+  def update_unit_info(id, tenant, rent)
+    sql = 'UPDATE units SET tenant = $1, rent = $2 WHERE id = $3'
+    
+    @db.exec_params(sql, [tenant, rent, id])
+  end
 end

@@ -66,6 +66,26 @@ get '/apartments/:apt_id' do
   erb :apartment
 end
 
+get '/apartments/:apt_id/update' do
+  @apt_id = params[:apt_id]
+  erb :edit_apartment
+end
+
+post '/apartments/:apt_id/update' do
+  apt_id = params[:apt_id]
+  apt_name = params[:apartment_name]
+  apt_address = params[:apartment_address]
+  
+  if valid_name?(apt_name) && valid_address?(apt_address)
+    @storage.update_apartment_info(apt_id, apt_name, apt_address)
+    session[:success] = 'Apartment has been updated'
+    redirect '/apartments'
+  else
+    session[:error] = 'Invalid apartment name or address'
+    erb :edit_apartment
+  end
+end
+
 get '/apartments/:apt_id/delete' do
   apt_id = params[:apt_id]
   apt_name = @storage.find_apartment(apt_id)[0][:name]
@@ -84,6 +104,27 @@ get '/apartments/:apt_id/tenant/:tenant_id/delete' do
   @storage.delete_tenant(tenant_id)
   session[:success] = "Tenant #{tenant_name} has been removed."
   redirect "/apartments/#{apt_id}"
+end
+
+get '/apartments/:apt_id/tenant/:tenant_id/update' do
+  @tenant_id = params[:tenant_id]
+  erb :edit_unit
+end
+
+post '/apartments/:apt_id/tenant/:tenant_id/update' do
+  apt_id = params[:apt_id]
+  @tenant_id = params[:tenant_id]
+  tenant_name = params[:tenant_name]
+  unit_rent = params[:unit_rent]
+  
+  if valid_tenant_name?(tenant_name) && valid_rent?(unit_rent)
+    @storage.update_unit_info(@tenant_id, tenant_name, unit_rent)
+    session[:success] = 'Tenant information has been updated'
+    redirect "/apartments/#{apt_id}"
+  else
+    session[:error] = 'Invalid tenant name or rent'
+    erb :edit_unit
+  end
 end
 
 get '/apartments/:apt_id/new_tenant' do
