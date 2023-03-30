@@ -27,24 +27,35 @@ def valid_rent?(rent_cost)
   rent_cost == rent_cost.to_i.to_s
 end
   
+helpers do
+  def final_page(collection_size, offset_size)
+    remainder = collection_size % offset_size
+    final_page_count = collection_size / offset_size + remainder - 1
+  end
+end
+
 
 before do
   @storage = DatabasePersistence.new(logger)
 end
 
+# Display all apartment buildings
 get '/' do
-  redirect '/apartments'
+  redirect '/apartments?page_count=0'
 end
 
+# Display all apartment buildings
 get '/apartments' do
   @apartments = @storage.all_apartments
   erb :apartments
 end
 
+# Go to page that allows the creation of a new apartment building
 get '/apartments/new' do
   erb :new_apartment
 end
 
+# Post form to add a new apartment building to apartment page
 post '/apartments' do
   apt_name = params[:apartment_name]
   apt_address = params[:apartment_address]
@@ -59,18 +70,28 @@ post '/apartments' do
   end
 end
 
+# Display all tenants in a particular apartment building
 get '/apartments/:apt_id' do
   @apartment_id = params[:apt_id].to_i
-  @units = @storage.units_in_apartment(@apartment_id)
+  @tenant_count =  @storage.count_units_in_apartment(@apartment_id)
+  if params[:page_count].to_i <= @tenant_count - 2 && params[:page_count].to_i >= 0
+    page_incrementation = params[:page_count].to_i * 2
+  else
+    session[:error] = "Page number #{params[:page_count]} does not exist."
+    redirect "/apartments/#{@apartment_id}?page_count=0"
+  end
+  @units = @storage.units_in_apartment(@apartment_id, page_incrementation)
   
   erb :apartment
 end
 
+# Go to page that allows for the updating of a specific apartment building
 get '/apartments/:apt_id/update' do
   @apt_id = params[:apt_id]
   erb :edit_apartment
 end
 
+# Update the information of an existing apartment building
 post '/apartments/:apt_id/update' do
   apt_id = params[:apt_id]
   apt_name = params[:apartment_name]
@@ -86,6 +107,7 @@ post '/apartments/:apt_id/update' do
   end
 end
 
+# Delete an apartment building
 get '/apartments/:apt_id/delete' do
   apt_id = params[:apt_id]
   apt_name = @storage.find_apartment(apt_id)[0][:name]
@@ -96,6 +118,7 @@ get '/apartments/:apt_id/delete' do
 end
   
 
+# Delete a specific tenant in an apartment building
 get '/apartments/:apt_id/tenant/:tenant_id/delete' do
   tenant_id = params[:tenant_id]
   apt_id = params[:apt_id]
@@ -106,11 +129,13 @@ get '/apartments/:apt_id/tenant/:tenant_id/delete' do
   redirect "/apartments/#{apt_id}"
 end
 
+# Go to the page that allows for the update of the values for a particular tenant in a building
 get '/apartments/:apt_id/tenant/:tenant_id/update' do
   @tenant_id = params[:tenant_id]
   erb :edit_unit
 end
 
+# Update the information of a particular tenant in an apartment building
 post '/apartments/:apt_id/tenant/:tenant_id/update' do
   apt_id = params[:apt_id]
   @tenant_id = params[:tenant_id]
@@ -127,12 +152,14 @@ post '/apartments/:apt_id/tenant/:tenant_id/update' do
   end
 end
 
+# Go to the page that allows for the addition of a new tenant to a building
 get '/apartments/:apt_id/new_tenant' do
   @apartment_id = params[:apt_id].to_i
   
   erb :new_tenant
 end
 
+# Add a new tenant to a building
 post '/apartments/:apt_id' do
   @apartment_id = params[:apt_id]
   tenant = params[:tenant_name]

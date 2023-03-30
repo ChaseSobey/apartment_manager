@@ -15,3 +15,14 @@
   <ul><a href='/apartments/<%= @apartment_id %>/new_tenant'>Add new tenant to building</a></ul>
   <ul><a href='/apartments'>Return to list of apartments</a></ul>
 <% end %>
+
+<% content_for :footer_page_change do %>
+  <% if params[:page_count] == '0' %>
+    <a href='/apartments/<%= @apartment_id %>?page_count=<%= params[:page_count].to_i + 1 %>'>Next Page</a>
+  <% elsif params[:page_count].to_i == final_page(@tenant_count, 2) %>
+    <a href='/apartments/<%= @apartment_id %>?page_count=<%= params[:page_count].to_i - 1 %>'>Previous Page</a>
+  <% else %>
+    <a href='/apartments/<%= @apartment_id %>?page_count=<%= params[:page_count].to_i - 1 %>'>Previous Page</a>
+    <a href='/apartments/<%= @apartment_id %>?page_count=<%= params[:page_count].to_i + 1 %>'>Next Page</a>
+  <% end %>
+<% end %>

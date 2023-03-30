@@ -28,6 +28,13 @@ class DatabasePersistence
     end
   end
   
+  def count_apartments
+    sql = 'SELECT * FROM apartment_buildings'
+    
+    result = @db.exec(sql)
+    result.ntuples
+  end
+  
   def find_tenant(id)
     sql = <<~SQL
       SELECT * FROM units WHERE id = $1;
@@ -39,12 +46,19 @@ class DatabasePersistence
     end
   end
   
-  def units_in_apartment(apt_id)
-    sql = <<~SQL
-      SELECT * FROM units WHERE building_id = $1 ORDER BY tenant;
-    SQL
+  def count_units_in_apartment(apt_id)
+    sql = 'SELECT * FROM units WHERE building_id = $1'
     
     result = @db.exec_params(sql, [apt_id])
+    result.ntuples
+  end
+  
+  def units_in_apartment(apt_id, page)
+    sql = <<~SQL
+      SELECT * FROM units WHERE building_id = $1 ORDER BY tenant LIMIT 2 OFFSET $2;
+    SQL
+    
+    result = @db.exec_params(sql, [apt_id, page])
     result.map do |tuple|
       { id: tuple['id'], building_id: tuple['building_id'], rent: tuple['rent'], tenant: tuple['tenant'] }
     end

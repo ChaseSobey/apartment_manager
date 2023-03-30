@@ -1,7 +1,7 @@
 <ul>
   <% @apartments.each do |building| %>
     <li>
-      <a href='/apartments/<%= building[:id] %>'>
+      <a href='/apartments/<%= building[:id] %>?page_count=0'>
         <h2><%= building[:name] %></h2>
       </a>
       <a href='/apartments/<%= building[:id] %>/update'>Edit Apartment Info</a>
