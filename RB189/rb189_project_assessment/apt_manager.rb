@@ -26,7 +26,18 @@ end
 def valid_rent?(rent_cost)
   rent_cost == rent_cost.to_i.to_s
 end
-  
+
+def user_signed_in?
+  session.key?(:username)
+end
+
+def require_signed_in_user
+  unless user_signed_in?
+    session[:error] = "You must be signed in to do that."
+    redirect "/signin"
+  end
+end
+
 helpers do
   def final_page(collection_size, offset_size)
     remainder = collection_size % offset_size
@@ -41,11 +52,35 @@ end
 
 # Display all apartment buildings
 get '/' do
-  redirect '/apartments?page_count=0'
+  require_signed_in_user
+  redirect '/signin'
+end
+
+get '/signin' do
+  erb :signin
+end
+
+post '/signin' do 
+  if params[:username] == 'grader' && params[:password] == '100%'
+    session[:username] = params[:username]
+    session[:success] = 'Welcome!'
+    redirect '/apartments?page_count=0'
+  else
+    session[:error] = 'Invalid Credentials.'
+    status 422
+    erb :signin
+  end
+end
+
+post '/signout' do
+  session[:success] = 'You have signed out'
+  session.delete(:username)
+  redirect '/signin'
 end
 
 # Display all apartment buildings
 get '/apartments' do
+  require_signed_in_user
   @apartment_id = params[:apt_id].to_i
   @apartment_count =  @storage.count_apartments
   
@@ -61,6 +96,7 @@ end
 
 # Go to page that allows the creation of a new apartment building
 get '/apartments/new' do
+  require_signed_in_user
   erb :new_apartment
 end
 
@@ -81,6 +117,7 @@ end
 
 # Display all tenants in a particular apartment building
 get '/apartments/:apt_id' do
+  require_signed_in_user
   @apartment_id = params[:apt_id].to_i
   @tenant_count =  @storage.count_units_in_apartment(@apartment_id)
   if params[:page_count].to_i <= final_page(@tenant_count, 2) && params[:page_count].to_i >= 0
@@ -96,6 +133,7 @@ end
 
 # Go to page that allows for the updating of a specific apartment building
 get '/apartments/:apt_id/update' do
+  require_signed_in_user
   @apt_id = params[:apt_id]
   erb :edit_apartment
 end
@@ -118,6 +156,7 @@ end
 
 # Delete an apartment building
 get '/apartments/:apt_id/delete' do
+  require_signed_in_user
   apt_id = params[:apt_id]
   apt_name = @storage.find_apartment(apt_id)[0][:name]
   
@@ -129,6 +168,7 @@ end
 
 # Delete a specific tenant in an apartment building
 get '/apartments/:apt_id/tenant/:tenant_id/delete' do
+  require_signed_in_user
   tenant_id = params[:tenant_id]
   apt_id = params[:apt_id]
   tenant_name = @storage.find_tenant(tenant_id)[0][:tenant]
@@ -140,6 +180,7 @@ end
 
 # Go to the page that allows for the update of the values for a particular tenant in a building
 get '/apartments/:apt_id/tenant/:tenant_id/update' do
+  require_signed_in_user
   @tenant_id = params[:tenant_id]
   erb :edit_unit
 end
@@ -163,6 +204,7 @@ end
 
 # Go to the page that allows for the addition of a new tenant to a building
 get '/apartments/:apt_id/new_tenant' do
+  require_signed_in_user
   @apartment_id = params[:apt_id].to_i
   
   erb :new_tenant

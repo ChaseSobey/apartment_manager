@@ -28,3 +28,12 @@
     <% end %>
   <% end %>
 <% end %>
+
+ <% if session[:username] %>
+  <form method="post" action="/signout">
+    <p class="user-status">
+      Signed in as <%= session[:username] %>.
+      <button type="submit">Sign Out</button>
+    </p>
+  </form>
+<% end %>
