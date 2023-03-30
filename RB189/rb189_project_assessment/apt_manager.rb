@@ -49,7 +49,7 @@ get '/apartments' do
   @apartment_id = params[:apt_id].to_i
   @apartment_count =  @storage.count_apartments
   
-  if params[:page_count].to_i <= @apartment_count && params[:page_count].to_i >= 0
+  if params[:page_count].to_i <= final_page(@apartment_count, 2) && params[:page_count].to_i >= 0
     page_incrementation = params[:page_count].to_i * 2
   else
     session[:error] = "Page number #{params[:page_count]} does not exist."
@@ -83,7 +83,7 @@ end
 get '/apartments/:apt_id' do
   @apartment_id = params[:apt_id].to_i
   @tenant_count =  @storage.count_units_in_apartment(@apartment_id)
-  if params[:page_count].to_i <= @tenant_count && params[:page_count].to_i >= 0
+  if params[:page_count].to_i <= final_page(@tenant_count, 2) && params[:page_count].to_i >= 0
     page_incrementation = params[:page_count].to_i * 2
   else
     session[:error] = "Page number #{params[:page_count]} does not exist."
