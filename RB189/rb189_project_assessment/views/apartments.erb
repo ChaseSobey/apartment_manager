@@ -15,3 +15,16 @@
 <% content_for :header_links do %>
   <a href='/apartments/new'>Add new apartment building</a>
 <% end %>
+
+<% content_for :footer_page_change do %>
+  <% unless @apartment_count <= 2 %>
+    <% if params[:page_count] == '0' %>
+      <a href='/apartments?page_count=<%= params[:page_count].to_i + 1 %>'>Next Page</a>
+    <% elsif params[:page_count].to_i == final_page(@apartment_count, 2) %>
+      <a href='/apartments?page_count=<%= params[:page_count].to_i - 1 %>'>Previous Page</a>
+    <% else %>
+      <a href='/apartments?page_count=<%= params[:page_count].to_i - 1 %>'>Previous Page</a>
+      <a href='/apartments?page_count=<%= params[:page_count].to_i + 1 %>'>Next Page</a>
+    <% end %>
+  <% end %>
+<% end %>

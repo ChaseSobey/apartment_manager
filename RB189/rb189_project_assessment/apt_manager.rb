@@ -46,7 +46,16 @@ end
 
 # Display all apartment buildings
 get '/apartments' do
-  @apartments = @storage.all_apartments
+  @apartment_id = params[:apt_id].to_i
+  @apartment_count =  @storage.count_apartments
+  
+  if params[:page_count].to_i <= @apartment_count && params[:page_count].to_i >= 0
+    page_incrementation = params[:page_count].to_i * 2
+  else
+    session[:error] = "Page number #{params[:page_count]} does not exist."
+    redirect "/apartments?page_count=0"
+  end
+  @apartments = @storage.all_apartments(page_incrementation)
   erb :apartments
 end
 
@@ -74,7 +83,7 @@ end
 get '/apartments/:apt_id' do
   @apartment_id = params[:apt_id].to_i
   @tenant_count =  @storage.count_units_in_apartment(@apartment_id)
-  if params[:page_count].to_i <= @tenant_count - 2 && params[:page_count].to_i >= 0
+  if params[:page_count].to_i <= @tenant_count && params[:page_count].to_i >= 0
     page_incrementation = params[:page_count].to_i * 2
   else
     session[:error] = "Page number #{params[:page_count]} does not exist."

@@ -6,12 +6,12 @@ class DatabasePersistence
     @logger = logger
   end
   
-  def all_apartments
+  def all_apartments(page)
     sql = <<~SQL
-      SELECT * FROM apartment_buildings ORDER BY name;
+      SELECT * FROM apartment_buildings ORDER BY name LIMIT 2 OFFSET $1;
     SQL
     
-    result = @db.exec_params(sql)
+    result = @db.exec_params(sql, [page])
     result.map do |tuple|
       { id: tuple['id'], name: tuple['name'], address: tuple['address'] }
     end
