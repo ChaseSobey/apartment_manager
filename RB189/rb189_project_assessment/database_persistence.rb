@@ -13,7 +13,7 @@ class DatabasePersistence
     
     result = @db.exec_params(sql, [page])
     result.map do |tuple|
-      { id: tuple['id'], name: tuple['name'], address: tuple['address'] }
+      { id: tuple['id'], name: tuple['name'].split.map{ |word| word.capitalize }.join(' '), address: tuple['address'] }
     end
   end
   
@@ -74,7 +74,7 @@ class DatabasePersistence
     
     result = @db.exec_params(sql, [apt_id, page])
     result.map do |tuple|
-      { id: tuple['id'], building_id: tuple['building_id'], rent: tuple['rent'], tenant: tuple['tenant'] }
+      { id: tuple['id'], building_id: tuple['building_id'], rent: tuple['rent'], tenant: tuple['tenant'].split.map{ |names| names.capitalize }.join(' ') }
     end
   end
   

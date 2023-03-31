@@ -39,10 +39,19 @@ def require_signed_in_user
   end
 end
 
+def check_page_count_is_a_number(page_count)
+  page_count == page_count.to_i.to_s
+end
+
+def valid_id(id) #Used to check if params[:apt_id] or params[:tenant_id ] is actually a number or not
+  id == id.to_i.to_s
+end
+
 helpers do
   def final_page(collection_size, offset_size)
     remainder = collection_size % offset_size
     final_page_count = collection_size / offset_size + remainder - 1
+    final_page_count
   end
 end
 
@@ -85,7 +94,7 @@ get '/apartments' do
   @apartment_id = params[:apt_id].to_i
   @apartment_count =  @storage.count_apartments
   
-  if params[:page_count].to_i <= final_page(@apartment_count, 2) && params[:page_count].to_i >= 0 || @apartment_count == 0
+  if params[:page_count].to_i <= final_page(@apartment_count, 2) && params[:page_count].to_i >= 0 && check_page_count_is_a_number(params[:page_count]) || @apartment_count == 0
     page_incrementation = params[:page_count].to_i * 2
   else
     session[:error] = "Page number #{params[:page_count]} does not exist."
@@ -121,7 +130,13 @@ get '/apartments/:apt_id' do
   require_signed_in_user
   @apartment_id = params[:apt_id].to_i
   @tenant_count =  @storage.count_units_in_apartment(@apartment_id)
-  if params[:page_count].to_i <= final_page(@tenant_count, 2) && params[:page_count].to_i >= 0 || @tenant_count == 0
+  
+  unless valid_id(params[:apt_id])
+    session[:error] = 'Invalid apartment id'
+    redirect '/apartments?page_count=0'
+  end
+  
+  if params[:page_count].to_i <= final_page(@tenant_count, 2) && params[:page_count].to_i >= 0 && check_page_count_is_a_number(params[:page_count])|| @tenant_count == 0
     page_incrementation = params[:page_count].to_i * 2
   else
     session[:error] = "Page number #{params[:page_count]} does not exist."
@@ -136,7 +151,12 @@ end
 get '/apartments/:apt_id/update' do
   require_signed_in_user
   @apt_id = params[:apt_id]
-  erb :edit_apartment
+  if valid_id(@apt_id)
+    erb :edit_apartment
+  else
+    session[:error] = 'Invalid apartment id'
+    redirect '/apartments?page_count=0'
+  end
 end
 
 # Update the information of an existing apartment building
@@ -183,7 +203,13 @@ end
 get '/apartments/:apt_id/tenant/:tenant_id/update' do
   require_signed_in_user
   @tenant_id = params[:tenant_id]
-  erb :edit_unit
+  
+  if valid_id(@tenant_id) && valid_id(params[:apt_id])
+    erb :edit_unit
+  else
+    session[:error] = "Invalid tenant id, apartment id or both"
+    redirect "/apartments/#{params[:apt_id]}?page_count=0"
+  end
 end
 
 # Update the information of a particular tenant in an apartment building
@@ -196,7 +222,7 @@ post '/apartments/:apt_id/tenant/:tenant_id/update' do
   if valid_tenant_name?(tenant_name) && valid_rent?(unit_rent)
     @storage.update_unit_info(@tenant_id, tenant_name, unit_rent)
     session[:success] = 'Tenant information has been updated'
-    redirect "/apartments/#{apt_id}"
+    redirect "/apartments/#{apt_id}?page_count=0"
   else
     session[:error] = 'Invalid tenant name or rent'
     erb :edit_unit
@@ -206,9 +232,14 @@ end
 # Go to the page that allows for the addition of a new tenant to a building
 get '/apartments/:apt_id/new_tenant' do
   require_signed_in_user
-  @apartment_id = params[:apt_id].to_i
+  @apartment_id = params[:apt_id]
   
-  erb :new_tenant
+  if valid_id(@apartment_id)
+    erb :new_tenant
+  else
+    session[:error] = "Apartment id: #{@apartment_id} does not exist"
+    redirect "/apartments?page_count=0"
+  end
 end
 
 # Add a new tenant to a building
@@ -220,7 +251,7 @@ post '/apartments/:apt_id' do
   if valid_tenant_name?(tenant) && valid_rent?(rent)
     @storage.add_new_tenant(tenant, rent, @apartment_id)
     session[:success] = "#{tenant} has been added as a tenant."
-    redirect "/apartments/#{@apartment_id}"
+    redirect "/apartments/#{@apartment_id}?page_count=0"
   else
     session[:error] = 'Invalid tenant name or rent'
     erb :new_tenant
