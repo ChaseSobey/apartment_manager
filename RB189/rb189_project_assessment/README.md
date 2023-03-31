@@ -32,3 +32,10 @@ run the program with the terminal command "bundle exec ruby apt_manager.rb -p $P
 
 the username to log in is: 'grader'
 the password to log in is: '100%'
+
+
+---- FAQ WHEN USING ----
+
+A valid address for a new property must begin with a number
+A valid name for a tenant must be a first and last name
+A valid rent must be less than $10000 and input in whole dollars (no cents)

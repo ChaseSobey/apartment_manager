@@ -24,7 +24,7 @@ def valid_tenant_name?(name)
 end
 
 def valid_rent?(rent_cost)
-  rent_cost == rent_cost.to_i.to_s
+  rent_cost == rent_cost.to_i.to_s && rent_cost.to_f < 10000.00 && rent_cost.to_i > 0
 end
 
 def user_signed_in?
@@ -84,7 +84,7 @@ get '/apartments' do
   @apartment_id = params[:apt_id].to_i
   @apartment_count =  @storage.count_apartments
   
-  if params[:page_count].to_i <= final_page(@apartment_count, 2) && params[:page_count].to_i >= 0
+  if params[:page_count].to_i <= final_page(@apartment_count, 2) && params[:page_count].to_i >= 0 || @apartment_count == 0
     page_incrementation = params[:page_count].to_i * 2
   else
     session[:error] = "Page number #{params[:page_count]} does not exist."
@@ -120,7 +120,7 @@ get '/apartments/:apt_id' do
   require_signed_in_user
   @apartment_id = params[:apt_id].to_i
   @tenant_count =  @storage.count_units_in_apartment(@apartment_id)
-  if params[:page_count].to_i <= final_page(@tenant_count, 2) && params[:page_count].to_i >= 0
+  if params[:page_count].to_i <= final_page(@tenant_count, 2) && params[:page_count].to_i >= 0 || @tenant_count == 0
     page_incrementation = params[:page_count].to_i * 2
   else
     session[:error] = "Page number #{params[:page_count]} does not exist."
@@ -162,7 +162,7 @@ get '/apartments/:apt_id/delete' do
   
   @storage.delete_apartment(apt_id)
   session[:success] = "#{apt_name} has been removed."
-  redirect '/apartments'
+  redirect '/apartments?page_count=0'
 end
   
 
@@ -175,7 +175,7 @@ get '/apartments/:apt_id/tenant/:tenant_id/delete' do
   
   @storage.delete_tenant(tenant_id)
   session[:success] = "Tenant #{tenant_name} has been removed."
-  redirect "/apartments/#{apt_id}"
+  redirect "/apartments/#{apt_id}?page_count=0"
 end
 
 # Go to the page that allows for the update of the values for a particular tenant in a building
