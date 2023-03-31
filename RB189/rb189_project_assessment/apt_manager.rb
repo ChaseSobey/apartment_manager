@@ -12,7 +12,8 @@ configure do
 end
 
 def valid_name?(name)
-  name.strip.length > 0
+  all_names = @storage.all_apartment_names.map{ |name| name.downcase }
+  name.strip.length > 0 && !all_names.include?(name.downcase)
 end
 
 def valid_address?(address)
@@ -20,7 +21,7 @@ def valid_address?(address)
 end
 
 def valid_tenant_name?(name)
-  name.strip.size > 0 && name.split.size > 1
+  name.strip.size > 0 && name.split.size > 1 && !@storage.all_tenant_names.include?(name)
 end
 
 def valid_rent?(rent_cost)

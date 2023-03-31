@@ -17,6 +17,13 @@ class DatabasePersistence
     end
   end
   
+  def all_apartment_names
+    sql = 'SELECT * FROM apartment_buildings'
+    
+    result = @db.exec(sql)
+    result.field_values(:name)
+  end
+  
   def find_apartment(id)
     sql = <<~SQL
       SELECT * FROM apartment_buildings WHERE id = $1;
@@ -33,6 +40,13 @@ class DatabasePersistence
     
     result = @db.exec(sql)
     result.ntuples
+  end
+  
+  def all_tenant_names
+    sql = 'SELECT * FROM units'
+    
+    result = @db.exec(sql)
+    result.field_values(:tenant)
   end
   
   def find_tenant(id)
