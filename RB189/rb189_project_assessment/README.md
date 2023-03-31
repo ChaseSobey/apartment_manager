@@ -25,7 +25,8 @@ this is the recommended setup for using this web application
 Create a database with the name 'project' and download schema.sql into the database with the following terminal command:
 psql -d project < schema.sql
 
-run the program with the terminal command "bundle exec ruby apt_manager.rb -p $PORT -o $IP" and then enjoy!
+enter the file path of the program and run 'bundle install' in the terminal to set up all dependencies
+run the program with the terminal command "bundle exec ruby apt_manager.rb" and then enjoy!
 
 
 ---- LOGIN CREDENTIALS ----
