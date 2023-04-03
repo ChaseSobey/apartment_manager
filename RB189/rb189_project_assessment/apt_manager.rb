@@ -35,6 +35,7 @@ end
 def require_signed_in_user
   unless user_signed_in?
     session[:error] = "You must be signed in to do that."
+    session[:previous_url] = request.path_info
     redirect "/signin"
   end
 end
@@ -74,7 +75,11 @@ post '/signin' do
   if params[:username] == 'grader' && params[:password] == '100%'
     session[:username] = params[:username]
     session[:success] = 'Welcome!'
-    redirect '/apartments?page_count=0'
+    if session[:previous_url]
+      redirect "#{session.delete(:previous_url)}"
+    else
+      redirect "/apartments?page_count=0"
+    end
   else
     session[:error] = 'Invalid Credentials.'
     status 422
@@ -118,7 +123,7 @@ post '/apartments' do
   if valid_name?(apt_name) && valid_address?(apt_address)
     @storage.add_new_apartment(apt_name, apt_address)
     session[:success] = 'A new apartment has been added'
-    redirect '/apartments'
+    redirect '/apartments?page_count=0'
   else
     session[:error] = 'Invalid apartment name or address'
     erb :new_apartment
@@ -164,11 +169,12 @@ post '/apartments/:apt_id/update' do
   apt_id = params[:apt_id]
   apt_name = params[:apartment_name]
   apt_address = params[:apartment_address]
+  params[:page_count] = '0'
   
   if valid_name?(apt_name) && valid_address?(apt_address)
     @storage.update_apartment_info(apt_id, apt_name, apt_address)
     session[:success] = 'Apartment has been updated'
-    redirect '/apartments'
+    redirect '/apartments?page_count=0'
   else
     session[:error] = 'Invalid apartment name or address'
     erb :edit_apartment
