@@ -1,0 +1,14 @@
+<form action="/apartments/<%= params[:apt_id] %>/tenant/<%= params[:tenant_id] %>/update" method="post">
+  <div class='tenant_name'>
+    <label for="tenant_name">Update the name of the tenant:</label>
+    <input name="tenant_name" placeholder="<%= @storage.find_tenant(@tenant_id)[0][:tenant] %>" type="text" value="<%= params[:tenant_name] %>">
+  </div>
+  <div class="unit_rent">
+    <label for="unit_rent">Update the rent of the unit: </label>
+    <input name="unit_rent" placeholder="<%= @storage.find_tenant(@tenant_id)[0][:rent] %>" type="text" value="<%= params[:unit_rent] %>">
+  </div>
+  <div class="unit">
+    <input type="submit" value="Save">
+    <a href='/apartments/<%= params[:apt_id] %>?page_count=0'>Cancel</a>
+  </div>
+</form>
