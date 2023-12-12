@@ -1,11 +1,11 @@
----- W E L C O M E   T O   A P A R T M E N T   M A N A G E R   W E B A P P ----
+# Welcome to apartment manager web app!
 
 This application is an apartment rental tracker that contains a list of apartment buildings
 with a list of primary tenants, rents, and apartment size
 
 The schema is One (apartment) : Many (Tenants)
 
----- APPLICATION DEPENDENCY VERSIONS ----
+## Application dependency versions
 
 Ruby, PostgreSQL and Gem versions used:
 
@@ -20,24 +20,29 @@ Google Chrome Version 108.0.5359.125 (Official Build) (64-bit) used during produ
 This program was designed, tested, and run in an AWS Cloud9 environment through a Google Chrome web browser and as such
 this is the recommended setup for using this web application
 
----- USING THIS APPLICATION PROPERLY ----
+## Application setup
 
 Create a database with the name 'project' and download schema.sql into the database with the following terminal command:
+
+```
 psql -d project < schema.sql
+```
 
 enter the file path of the program and run 'bundle install' in the terminal to set up all dependencies
 run the program with the terminal command "bundle exec ruby apt_manager.rb" and then enjoy!
 
-
----- LOGIN CREDENTIALS ----
+## Login credentials
 
 the username to log in is: 'grader'
+
 the password to log in is: '100%'
 
-
----- FAQ WHEN USING ----
+## FAQ's when using
 
 A valid address for a new property must begin with a number
+
 A valid name for a tenant must be a first and last name and be unique
+
 A valid rent must be less than $10000 and input in whole dollars (no cents)
+
 A valid property name must be unique
